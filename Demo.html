@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<h1 style="color: orange;" align="center">Medicine As A Service</h1>
+<style>
+body {
+	background-image: url("./b.jpg");
+	background-repeat: repeat-x;
+}
+
+table {
+	text-align: center;
+	color: pink;
+	border: activeborder;
+	alignment-adjust: central;
+}
+
+th,td {
+	padding: 3px;
+}
+</style>
+<script language="javascript" type="text/javascript">
+	var request = null;
+
+	function createRequest() {
+		try {
+			request = new XMLHttpRequest();
+		} catch (trymicrosoft) {
+			try {
+				request = new ActiveXObject("MsXML2.XMLHTTP");
+			} catch (othermicrosoft) {
+				try {
+					request = new ActiveXObject("Microsoft.XMLHTTP");
+				} catch (failed) {
+					request = null;
+				}
+			}
+		}
+
+		if (request == null)
+			alert("Error creating request object!");
+	}
+
+	function getMessage(lat, lon) {
+		alert(lat);
+		createRequest();
+		;
+		var dis = document.getElementById("dt_id").value;
+		var url = "http://localhost:8080/druginfo_service/webresources/drugController/getdata/"
+				+ dis;
+		alert(url);
+
+		request.open("GET", url, true);
+
+		request.onreadystatechange = handleResponse;
+
+		request.send(null);
+
+	}
+
+	function getNearby() {
+
+		createRequest();
+		;
+		var addr = document.getElementById("addr").value;
+		var url = "http://localhost:8080/druginfo_service/webresources/geoController/getdata/"+addr;
+		alert(url);
+
+		request.open("GET", url, true);
+
+		request.onreadystatechange = handleResponse2;
+
+		request.send(null);
+
+	}
+
+	function handleResponse() {
+		if (request.readyState == 4) {
+			alert("readystate=4");
+			var check = request.status;
+			alert(check);
+			alert(request.responseText);
+			if (check.toString() == "200")
+				alert("status ok");
+			var det = eval("(" + request.responseText + ")");
+			alert(det);
+			var data = "";
+			var i = 0;
+			for ( var property in det) {
+				alert("Entered in for loop");
+				if (Object.prototype.hasOwnProperty.call(det, property)) {
+					data = data + "<tr>";
+					data = data + "<td class=\"sorting_1\">" + det[i].disease
+							+ "</td>";
+					data = data + "<td class=\" sorting_1\">" + det[i].drug
+							+ "</td>";
+					data = data + "<td class=\" sorting_1\">" + det[i].trade
+							+ "</td>";
+					i++;
+				}
+
+			}
+			document.getElementById("table_data").innerHTML = data;
+			document.getElementById("d").style.display = "block";
+			document.getElementById("b1").style.display = "block";
+			document.getElementById("addr").style.display = "block";
+			document.getElementById("h3").style.display = "block";
+
+		}
+	}
+
+	function handleResponse2() {
+		if (request.readyState == 4) {
+			alert("readystate=4");
+			var check = request.status;
+			alert(check);
+			alert(request.responseText);
+			if (check.toString() == "200")
+				alert("status ok");
+                else
+                       alert("Invalid Address");
+						var det = eval("(" + request.responseText + ")");
+			alert(det);
+			var data = "";
+			var i = 0;
+			for ( var property in det) {
+				alert("Entered in for loop");
+				if (Object.prototype.hasOwnProperty.call(det, property)) {
+					data = data + "<tr>";
+					data = data + "<td class=\"sorting_1\">" + det[i].name
+							+ "</td>";
+					data = data + "<td class=\" sorting_1\">" + det[i].address
+							+ "</td>";
+					i++;
+				}
+
+			}
+			document.getElementById("pharmacy_data").innerHTML = data;
+			document.getElementById("d2").style.display = "block";
+
+		}
+	}
+</script>
+</head>
+<body>
+	<div style="text-align: center; margin: 8px 5px auto;">
+		<label for="dt_id" style="color: white;">Select disease </label>
+		<!-- <input type="Text" id="dt_id" maxlength="25"size="25"/>  -->
+		<select id="dt_id">
+			<option value="fever">Fever</option>
+			<option value="acidity">Acidity</option>
+			<option value="cold">Cold</option>
+			<option value="conjunctivitis">Conjunctivitis</option>
+
+
+		</select> <input type='button' onclick='getMessage()' value='SUBMIT'>
+
+	</div>
+	<p></p>
+	<div id="d" style="display: none;" align="center">
+		<table border="1">
+			<thead>
+				<tr role="row">
+					<th style="color: yellow;">Disease</th>
+					<th style="color: yellow;">Drug</th>
+					<th style="color: yellow;">Trade</th>
+				</tr>
+			</thead>
+			<tbody id="table_data">
+
+			</tbody>
+		</table>
+	</div>
+	<p></p>
+	<div align="center">
+	<h3 align="center" id="h3" style="color: yellow; display: none;">Address:</h3>
+ 	    <input type='text' align="center" id="addr" style="display: none;">
+ 	    <br>
+		<input type='button' align="center" onclick='getNearby()'
+			value='Search Nearby Pharmacy Stores' id="b1" style="display: none;">
+	</div>
+	<p></p>
+	<div id="d2" style="display: none;" align="center">
+
+		<table border="1">
+			<thead>
+				<tr role="row">
+					<th style="color: orange;">Pharmacy store</th>
+					<th style="color: orange;">Address</th>
+
+				</tr>
+			</thead>
+			<tbody id="pharmacy_data">
+
+			</tbody>
+		</table>
+	</div>
+
+	<p id="demo"></p>
+
+	<!-- getlocation here -->
+
+
+</body>
+</html>
